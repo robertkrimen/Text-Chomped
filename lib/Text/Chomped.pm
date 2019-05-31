@@ -43,11 +43,13 @@ _END_
 
 =head1 DESCRIPTON
 
-Text::Chomped will export C<chomped> and C<chopped> which behave like C<chomp> and C<chop> except return the cho[mp]ped value rather than
-what was cho[mp]ped off (the character)
+Text::Chomped will export C<chomped> and C<chopped> which behave like C<chomp>
+and C<chop> except return the cho[mp]ped value rather than what was cho[mp]ped
+off (the character) or the count of chomped characters.
 
-Unfortunately subroutine prototyping in Perl cannot ape the builtin chomp/chop prototype, so you'll have to pass in an ARRAY reference if you want to
-chomp/chop a list
+Unfortunately subroutine prototyping in Perl cannot ape the builtin chomp/chop
+prototype, so you'll have to pass in an ARRAY reference if you want to
+chomp/chop a literal list.
 
 =cut
 
@@ -55,22 +57,29 @@ use vars qw/@ISA @EXPORT/;
 @ISA = qw/Exporter/;
 @EXPORT = qw/chomped chopped/;
 
-sub _chomped ($)  {
-    my $value = $_[0];
-    chomp $value;
-    return $value;
-}
+sub chomped(;+) {
+    my @retvals;
 
-sub chomped ($)  {
-    my $value = $_[0];
-    if ( ref $value eq 'ARRAY' ) {
-        my @result = map { _chomped $_ } @$value;
-        return wantarray ? @result : \@result;
+    # Process $_ by default
+    push @_, $_ unless @_;
+
+    # Accept an arrayref for "chomped [qw(...)]".
+    # Note that this also means we take `for([...]) { chomped }`
+    @_ = @{$_[0]} if ref $_[0] eq 'ARRAY';
+
+    # Chomp each value
+    foreach my $val (@_) {
+        my $s = $val;
+        chomp $s;
+        push @retvals, $s;
     }
-    else {
-        return _chomped $value;
-    }
-}
+
+    # Only one return value (e.g., from `chomped` on $_)
+    return $retvals[0] unless $#retvals;
+
+    # Multiple return values: array or arrayref
+    return wantarray ? @retvals : \@retvals;
+} #chomped()
 
 sub _chopped ($)  {
     my $value = $_[0];
