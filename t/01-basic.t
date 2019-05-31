@@ -18,4 +18,9 @@ is( chopped "Xyzzy", "Xyzz" );
 cmp_deeply( scalar chomped [ "A\n", "b", "c\n" ], [qw/ A b c /] );
 cmp_deeply( scalar chopped [ "A\n", "b", "c\n" ], [ 'A', '', 'c' ] );
 
+my @vals = chomped [ "A\n", "b", "c\n" ];
+cmp_deeply( \@vals, [qw/ A b c /] );
+@vals = chopped [ "A\n", "b", "c\n" ];
+cmp_deeply( \@vals, [ 'A', '', 'c' ]);
+
 1;
