@@ -5,15 +5,15 @@ use strict;
 
 =head1 NAME
 
-Text::Chomped - A chomp and chop that will return the chomped and chopped
+Text::Chomped - Nondestructive chomp/chop that return the modified string
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
@@ -43,7 +43,7 @@ _END_
 
 =head1 DESCRIPTON
 
-Text::Chomped will export C<chomped> and C<chopped> which behave like C<chomp>
+Text::Chomped exports C<chomped> and C<chopped>.  These behave like C<chomp>
 and C<chop> except return the cho[mp]ped value rather than what was cho[mp]ped
 off (the character) or the count of chomped characters.
 
@@ -81,22 +81,46 @@ sub chomped(;+) {
     return wantarray ? @retvals : \@retvals;
 } #chomped()
 
-sub _chopped ($)  {
-    my $value = $_[0];
-    chop $value;
-    return $value;
-}
+#sub _chopped ($)  {
+#    my $value = $_[0];
+#    chop $value;
+#    return $value;
+#}
+#
+#sub chopped ($)  {
+#    my $value = $_[0];
+#    if ( ref $value eq 'ARRAY' ) {
+#        my @result = map { _chopped $_ } @$value;
+#        return wantarray ? @result : \@result;
+#    }
+#    else {
+#        return _chopped $value;
+#    }
+#}
 
-sub chopped ($)  {
-    my $value = $_[0];
-    if ( ref $value eq 'ARRAY' ) {
-        my @result = map { _chopped $_ } @$value;
-        return wantarray ? @result : \@result;
+sub chopped(;+) {
+    my @retvals;
+
+    # Process $_ by default
+    push @_, $_ unless @_;
+
+    # Accept an arrayref for "chopped [qw(...)]".
+    # Note that this also means we take `for([...]) { chopped }`
+    @_ = @{$_[0]} if ref $_[0] eq 'ARRAY';
+
+    # Chop each value
+    foreach my $val (@_) {
+        my $s = $val;
+        chop $s;
+        push @retvals, $s;
     }
-    else {
-        return _chopped $value;
-    }
-}
+
+    # Only one return value (e.g., from `chopped` on $_)
+    return $retvals[0] unless $#retvals;
+
+    # Multiple return values: array or arrayref
+    return wantarray ? @retvals : \@retvals;
+} #chopped()
 
 =head1 ACKNOWLEDGEMENTS
 

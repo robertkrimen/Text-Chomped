@@ -12,6 +12,10 @@ perl:
   - "5.10"
   - "5.08"
 
+env:
+  # Because Text-Chomped uses M::I and needs `use inc:...` to work
+  - PERL5LIB=.
+
 install:
   - cpanm ExtUtils::MakeMaker
     # Because EUMM v6.66 doesn't seem to generate the correct MYMETA.json,

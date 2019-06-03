@@ -9,6 +9,18 @@ plan qw/no_plan/;
 
 use Text::Chomped;
 
+# Make sure it's nondestructive
+my $var = "hello\n";
+is( chopped $var, 'hello' );
+is( $var, "hello\n" );
+is( chomped $var, 'hello' );
+is( $var, "hello\n" );
+
+# Trailing non-newlines
+is( chomped 'bar', 'bar' );
+is( chopped 'bar', 'ba' );
+
+# More sophisticated tests
 sub sentence { chomped <<_END_ }
 A quick brown fox jumped over the lazy dog
 _END_
