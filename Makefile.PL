@@ -110,6 +110,7 @@ my %opts = (
     },
     PREREQ_PM => {
         'Exporter' => '0',
+        'Import::Into' => '0',
         'strict' => '0',
         'vars' => '0',
         'warnings' => '0',

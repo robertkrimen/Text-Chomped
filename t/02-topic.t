@@ -1,11 +1,15 @@
 #!/usr/bin/perl -w
-
+# 02-topic.t: Tests of cho[mp]ped with $_ as an implicit argument
 use strict;
 use warnings;
 
 use Test::Most;
 
-plan qw/no_plan/;
+BEGIN {
+    # Need this in a BEGIN because the rest of the file can't compile on
+    # Perl < 5.014.
+    plan skip_all => 'Topic is unsupported on Perl < 5.14' if $] lt '5.014';
+}
 
 use Text::Chomped;
 
@@ -40,4 +44,4 @@ for(["a\n", "b", "c\n"]) {
     cmp_deeply( \@vals, ['a', '', 'c']);
 }
 
-1;
+done_testing;
