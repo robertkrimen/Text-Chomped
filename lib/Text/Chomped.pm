@@ -2,18 +2,25 @@ package Text::Chomped;
 
 use warnings;
 use strict;
+use Import::Into;
+
+our $VERSION = '0.02';  # TRIAL
+
+# This module simply dispatches to a submodule based on the Perl version
+
+sub import {
+    my $pkg = shift;
+    my $target = caller;
+    my $src_pkg = $] lt '5.014' ? 'Pre5014' : 'From5014';
+    "Text::Chomped::$src_pkg"->import::into($target, @_);
+}
+
+1; # End of Text::Chomped
+__END__
 
 =head1 NAME
 
-Text::Chomped - A chomp and chop that will return the chomped and chopped
-
-=head1 VERSION
-
-Version 0.01
-
-=cut
-
-our $VERSION = '0.01';
+Text::Chomped - Nondestructive chomp/chop that return the modified string
 
 =head1 SYNOPSIS
 
@@ -43,51 +50,23 @@ _END_
 
 =head1 DESCRIPTON
 
-Text::Chomped will export C<chomped> and C<chopped> which behave like C<chomp> and C<chop> except return the cho[mp]ped value rather than
-what was cho[mp]ped off (the character)
+Text::Chomped exports C<chomped> and C<chopped>.  These behave like C<chomp>
+and C<chop> except return the cho[mp]ped value rather than what was cho[mp]ped
+off (the character) or the count of chomped characters.
 
-Unfortunately subroutine prototyping in Perl cannot ape the builtin chomp/chop prototype, so you'll have to pass in an ARRAY reference if you want to
-chomp/chop a list
+Unfortunately subroutine prototyping in Perl cannot ape the builtin chomp/chop
+prototype, so you'll have to pass in an ARRAY reference if you want to
+chomp/chop a literal list.
 
-=cut
+=head1 MINIMUM PERL VERSION
 
-use vars qw/@ISA @EXPORT/;
-@ISA = qw/Exporter/;
-@EXPORT = qw/chomped chopped/;
+This module can run on Perls as old as 5.6.  However, chopping/chomping
+C<$_> is only available on Perl 5.14+.
 
-sub _chomped ($)  {
-    my $value = $_[0];
-    chomp $value;
-    return $value;
-}
+=head2 import
 
-sub chomped ($)  {
-    my $value = $_[0];
-    if ( ref $value eq 'ARRAY' ) {
-        my @result = map { _chomped $_ } @$value;
-        return wantarray ? @result : \@result;
-    }
-    else {
-        return _chomped $value;
-    }
-}
-
-sub _chopped ($)  {
-    my $value = $_[0];
-    chop $value;
-    return $value;
-}
-
-sub chopped ($)  {
-    my $value = $_[0];
-    if ( ref $value eq 'ARRAY' ) {
-        my @result = map { _chopped $_ } @$value;
-        return wantarray ? @result : \@result;
-    }
-    else {
-        return _chopped $value;
-    }
-}
+The C<import> function dispatches to an appropriate package using
+L<Import::Into> depending on the Perl version.
 
 =head1 ACKNOWLEDGEMENTS
 
@@ -117,15 +96,11 @@ Please report any bugs or feature requests to C<bug-text-chomped at rt.cpan.org>
 the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Text-Chomped>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
 
-
-
-
 =head1 SUPPORT
 
 You can find documentation for this module with the perldoc command.
 
     perldoc Text::Chomped
-
 
 You can also look for information at:
 
@@ -133,34 +108,20 @@ You can also look for information at:
 
 =item * RT: CPAN's request tracker
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Text-Chomped>
+L<https://rt.cpan.org/NoAuth/Bugs.html?Dist=Text-Chomped>
 
-=item * AnnoCPAN: Annotated CPAN documentation
+=item * MetaCPAN
 
-L<http://annocpan.org/dist/Text-Chomped>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/Text-Chomped>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/Text-Chomped/>
+L<https://metacpan.org/pod/Text::Chomped>
 
 =back
 
-
-=head1 ACKNOWLEDGEMENTS
-
-
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2009 Robert Krimen, all rights reserved.
+Copyright 2009, 2019 Robert Krimen and contributors.  All rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
-
 =cut
 
-'PACMAN'; # End of Text::Chomped

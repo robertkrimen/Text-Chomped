@@ -1,2 +1,8 @@
+0.02 2019-06-07
+    - New code to support using `$_` if no argument is provided
+      (GH-1, RT#129721)
+    - Changed build system to ExtUtils::MakeMaker to support
+      CI builds (GH-2)
+
 0.01 Tuesday May 26 15:06:57 PDT 2009:
     - Initial release (and hopefully final)
