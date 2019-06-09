@@ -17,10 +17,6 @@ build_script:
   # Grab the dependencies
   - cpanm --installdeps --notest --verbose .
 
-  # Need . for M::I
-  - cmd: set PERL5LIB=.
-  - sh: export PERL5LIB=.
-
   # Build it
   - perl Makefile.PL
   - cmd: gmake

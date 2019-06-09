@@ -3,6 +3,8 @@ package Text::Chomped;
 use warnings;
 use strict;
 
+our $VERSION = '0.02';  # TRIAL
+
 =head1 NAME
 
 Text::Chomped - Nondestructive chomp/chop that return the modified string
@@ -10,10 +12,6 @@ Text::Chomped - Nondestructive chomp/chop that return the modified string
 =head1 VERSION
 
 Version 0.02
-
-=cut
-
-our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 

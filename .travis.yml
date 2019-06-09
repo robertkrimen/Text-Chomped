@@ -1,3 +1,6 @@
+dist: trusty
+  # For older Perls - see https://github.com/travis-ci/perl-builder/issues/8
+
 language: perl
 perl:
   - "5.26"
@@ -10,15 +13,8 @@ perl:
   - "5.14"
   - "5.12"
   - "5.10"
-  - "5.08"
-
-env:
-  # Because Text-Chomped uses M::I and needs `use inc:...` to work
-  - PERL5LIB=.
+  - "5.8"
 
 install:
-  - cpanm ExtUtils::MakeMaker
-    # Because EUMM v6.66 doesn't seem to generate the correct MYMETA.json,
-    # causing lib::relative not to be loaded as a dependency.  See, e.g.,
-    # https://travis-ci.org/cxw42/Class-Tiny-ConstrainedAccessor/jobs/535823908
+  - perl -V
   - cpanm --with-recommends --verbose --installdeps --notest .
